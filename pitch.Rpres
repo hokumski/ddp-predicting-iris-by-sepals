@@ -1,0 +1,56 @@
+Predicting Iris Species By Sepals
+========================================================
+author: ak@dived.me
+date: April 2016
+autosize: true
+
+What is Iris dataset?
+========================================================
+
+The **Iris flower data set** or **Fisher's Iris data set** is a multivariate data set introduced by Ronald Fisher in his 1936 paper _The use of multiple measurements in taxonomic problems_ as an example of linear discriminant analysis.
+
+The data set consists of 50 samples from each of three species of Iris (_Iris setosa_, _Iris virginica_ and _Iris versicolor_). Four features were measured from each sample: the length and the width of the sepals and petals, in centimetres. 
+
+<https://en.wikipedia.org/wiki/Iris_flower_data_set>.
+
+
+Predicting kind of Iris specie
+========================================================
+But how much measurements do you need to predict what kind of iris is new one?
+Dataset contains *only* 150 measurements. 
+Is it enough for machine learning methods?
+
+<https://hokumski.shinyapps.io/predicting-iris-species-by-sepals/>
+
+**GBM** is R package for _Generalized Boosted Regression Modeling_. 
+Let's use only two parameters from Iris dataset: sepal width and length.
+
+This is classification question: _Species ~ Sepal.Length + Sepal.Width_
+
+
+Computing probabilities
+========================================================
+
+```{r, echo=FALSE}
+library(gbm)
+set.seed(1000);
+
+irisSample <- sample(seq_len(nrow(iris)), size = 100)
+irisTrain <- iris[irisSample, ]
+irisTest <- iris[-irisSample, ]
+```
+```{r}
+gbmmodel <- gbm(Species ~ Sepal.Length+Sepal.Width, distribution="multinomial", data=irisTrain, n.trees=20, shrinkage=0.1, cv.folds=5, n.minobsinnode = 2, verbose=FALSE, n.cores=1)
+pred<-predict(gbmmodel, irisTest, type="response"); pred
+```
+
+What could be done next?
+========================================================
+
+- Of course! Add _petals_!
+- Separate species when sampling the dataset (N of _each_ specie)
+- Add tuning of GBM parameters
+
+<https://github.com/hokumski/ddp-predicting-iris-by-sepals>
+
+### Thanks!
